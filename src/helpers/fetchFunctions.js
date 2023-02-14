@@ -14,7 +14,7 @@ export const fetchProductsList = async (searchTerm) => {
     throw new Error('Termo de busca não informado');
   }
   const response = await fetch(
-    `https://api.mercadolibre.com/sites/MLB/search?q=${searchTerm}`
+    `https://api.mercadolibre.com/sites/MLB/search?q=${searchTerm}`,
   );
   const { results } = await response.json();
   return results;
