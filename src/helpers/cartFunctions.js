@@ -1,4 +1,4 @@
-/**
+/** inicia projeto
  * Função que retorna todos os itens do carrinho salvos no localStorage.
  * @returns {Array} Itens de ids salvos do carrinho ou array vazio.
  */
