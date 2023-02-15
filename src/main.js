@@ -5,12 +5,20 @@ import { createProductElement } from './helpers/shopFunctions';
 
 document.querySelector('.cep-button').addEventListener('click', searchCep);
 
-(async () => {
-  const searchProduct = 'computador';
-  const productList = await fetchProductsList(searchProduct);
-  const productsContainer = document.querySelector('.products');
-  productList.forEach((product) => {
-    const productElement = createProductElement(product);
-    productsContainer.appendChild(productElement);
-  });
-})();
+const productsContainer = document.querySelector('.products');
+
+// Cria o elemento de carregamento
+const loadingElement = document.createElement('p');
+loadingElement.textContent = 'Carregando...';
+loadingElement.classList.add('loading');
+document.body.appendChild(loadingElement);
+
+const productList = await fetchProductsList('computador');
+
+// Remove o elemento de carregamento
+loadingElement.remove();
+
+productList.forEach((product) => {
+  const productElement = createProductElement(product);
+  productsContainer.appendChild(productElement);
+});
