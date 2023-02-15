@@ -11,7 +11,7 @@ const productsContainer = document.querySelector('.products');
 const loadingElement = document.createElement('p');
 loadingElement.textContent = 'Carregando...';
 loadingElement.classList.add('loading');
-document.body.appendChild(loadingElement);
+productsContainer.appendChild(loadingElement);
 
 const productList = await fetchProductsList('computador');
 
