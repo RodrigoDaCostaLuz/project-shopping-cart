@@ -26,4 +26,15 @@ describe('Teste a função fetchProductsList', () => {
   it('retorna um erro com a mensagem "Termo de busca não informado" quando nenhum parâmetro é passado', async () => {
     await expect(fetchProductsList()).rejects.toThrow('Termo de busca não informado');
   });
+
+  it('exibe o elemento de erro quando ocorre um erro na requisição à API', async () => {
+    fetch.mockRejectedValueOnce();
+    await fetchProductsList('computador');
+    expect(document.querySelector('.error')).not.toBeNull();
+  });
+
+  it('não exibe o elemento de erro quando a requisição à API é concluída com sucesso', async () => {
+    await fetchProductsList('computador');
+    expect(document.querySelector('.error')).toBeNull();
+  });
 });

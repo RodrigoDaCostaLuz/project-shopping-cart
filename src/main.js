@@ -7,18 +7,28 @@ document.querySelector('.cep-button').addEventListener('click', searchCep);
 
 const productsContainer = document.querySelector('.products');
 
-// Cria o elemento de carregamento
 const loadingElement = document.createElement('p');
 loadingElement.textContent = 'Carregando...';
 loadingElement.classList.add('loading');
 productsContainer.appendChild(loadingElement);
 
-const productList = await fetchProductsList('computador');
+try {
+  const productList = await fetchProductsList('computador');
 
-// Remove o elemento de carregamento
-loadingElement.remove();
+  // Remove o elemento de carregamento
+  loadingElement.remove();
 
-productList.forEach((product) => {
-  const productElement = createProductElement(product);
-  productsContainer.appendChild(productElement);
-});
+  productList.forEach((product) => {
+    const productElement = createProductElement(product);
+    productsContainer.appendChild(productElement);
+  });
+} catch (error) {
+  // Remove o elemento de carregamento
+  loadingElement.remove();
+
+  // Adiciona o elemento de erro dinamicamente
+  const errorElement = document.createElement('p');
+  errorElement.textContent = 'Algum erro ocorreu, recarregue a página e tente novamente';
+  errorElement.classList.add('error');
+  productsContainer.appendChild(errorElement);
+}
