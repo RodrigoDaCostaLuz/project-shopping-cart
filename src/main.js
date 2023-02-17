@@ -1,34 +1,64 @@
 import { searchCep } from './helpers/cepFunctions';
 import './style.css';
-import { fetchProductsList } from './helpers/fetchFunctions';
-import { createProductElement } from './helpers/shopFunctions';
+import { fetchProductsList, fetchProduct } from './helpers/fetchFunctions';
+import { createProductElement, createCustomElement,
+  createCartProductElement } from './helpers/shopFunctions';
+import { saveCartID } from './helpers/cartFunctions';
+
+const produtos = document.querySelector('.products');
+const btnProdutos = document.getElementsByClassName('product__add');
+const carrinhoCompras = document.querySelector('.cart__products');
 
 document.querySelector('.cep-button').addEventListener('click', searchCep);
 
-const productsContainer = document.querySelector('.products');
+const msgCustom = (element, className, innerText = '') => {
+  const customElement = createCustomElement(element, className, innerText);
+  produtos.appendChild(customElement);
+};
 
-const loadingElement = document.createElement('p');
-loadingElement.textContent = 'Carregando...';
-loadingElement.classList.add('loading');
-productsContainer.appendChild(loadingElement);
+const removeLoading = () => {
+  const elementToDelete = document.querySelector('.loading');
+  elementToDelete.remove();
+};
 
-try {
-  const productList = await fetchProductsList('computador');
-
-  // Remove o elemento de carregamento
-  loadingElement.remove();
-
-  productList.forEach((product) => {
-    const productElement = createProductElement(product);
-    productsContainer.appendChild(productElement);
+const addCompras = (product) => {
+  const productId = product.querySelector('.product__id').textContent;
+  saveCartID(productId);
+  fetchProduct(productId).then((productData) => {
+    const cartProductElement = createCartProductElement(productData);
+    carrinhoCompras.appendChild(cartProductElement);
   });
-} catch (error) {
-  // Remove o elemento de carregamento
-  loadingElement.remove();
+};
 
-  // Adiciona o elemento de erro dinamicamente
-  const errorElement = document.createElement('p');
-  errorElement.textContent = 'Algum erro ocorreu, recarregue a página e tente novamente';
-  errorElement.classList.add('error');
-  productsContainer.appendChild(errorElement);
-}
+const addComprasEventListener = () => {
+  Array.from(btnProdutos).forEach((product) => {
+    product.addEventListener('click', () => addCompras(product.parentNode));
+  });
+};
+
+const displayProducts = async (searchTerm) => {
+  msgCustom('p', 'loading', 'carregando...');
+  try {
+    const results = await fetchProductsList(searchTerm);
+    if (results.length) {
+      results.forEach((item) => {
+        produtos.appendChild(createProductElement(item));
+      });
+      addComprasEventListener();
+    } else {
+      msgCustom('p', 'error', 'Nenhum resultado encontrado.');
+    }
+  } catch (error) {
+    msgCustom(
+      'p',
+      'error',
+      'Algum erro ocorreu, recarregue a página e tente novamente.',
+    );
+  } finally {
+    removeLoading();
+  }
+};
+
+window.onload = () => {
+  displayProducts('computador');
+};
