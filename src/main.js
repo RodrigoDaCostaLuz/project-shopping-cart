@@ -10,6 +10,18 @@ const btnProdutos = document.getElementsByClassName('product__add');
 const carrinhoCompras = document.querySelector('.cart__products');
 const precosTotais = document.querySelector('.total-price');
 
+const showLoading = () => {
+  const loadingElement = createCustomElement('p', 'loading', 'carregando...');
+  document.body.appendChild(loadingElement);
+};
+
+const removeLoading = () => {
+  const loadingElement = document.querySelector('.loading');
+  if (loadingElement) {
+    loadingElement.remove();
+  }
+};
+
 document.querySelector('.cep-button').addEventListener('click', searchCep);
 
 const msgCustom = (element, className, innerText = '') => {
@@ -37,7 +49,7 @@ const addComprasX = () => {
 };
 
 const displayProducts = async (searchTerm) => {
-  msgCustom('p', 'loading', 'carregando...');
+  showLoading();
   try {
     const results = await fetchProductsList(searchTerm);
     if (results.length) {
@@ -51,6 +63,7 @@ const displayProducts = async (searchTerm) => {
   } catch (error) {
     msgCustom('p', 'error', 'Algum erro ocorreu, recarregue a página e tente novamente.');
   } finally {
+    removeLoading();
     const salvaProdutos = getSavedCartIDs();
     const promises = salvaProdutos.map((product) => fetchProduct(product));
     Promise.all(promises).then((result) => {
